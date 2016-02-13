@@ -4,7 +4,7 @@ import {
 } from 'angular2/core';
 
 import {bootstrap} from 'angular2/platform/browser';
-import ParameterDeclaration = ts.ParameterDeclaration;
+//import ParameterDeclaration = ts.ParameterDeclaration;
 
 /**
  * Provides a `Product` object
@@ -24,7 +24,7 @@ class Product {
  */
 @Component({
     selector: 'inventory-app',
-    directives: [ProductsList],
+    directives: [],
     template: `
   <div class="inventory-app">
    <products-list
@@ -75,7 +75,7 @@ class InventoryApp {
         console.log('Product selected: ', product);
     }
 
-}
+
 
 }
 
