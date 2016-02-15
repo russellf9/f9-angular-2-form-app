@@ -4,18 +4,80 @@ import {
 } from 'angular2/core';
 
 import {bootstrap} from 'angular2/platform/browser';
-//import ParameterDeclaration = ts.ParameterDeclaration;
+
 
 /**
  * Provides a `Product` object
  */
 class Product {
-    constructor(public sku:string,
-                public name:string,
-                public imageUrl:string,
-                public department:string[],
-                public price:number) {
+    constructor(
+        public sku:string,
+        public name:string,
+        public imageUrl:string,
+        public department:string[],
+        public price:number) {
     }
+}
+
+/**
+ *
+ */
+@Component({
+    selector: 'products-list',
+    directives: [],
+    inputs: ['productList'],
+    outputs: ['onProductSelected'],
+    template: `
+    <div class='ui items'>
+        <product-row
+            *ngFor='#myProduct of productList'
+            [product] = 'myProduct'
+            (click) = 'clicked(myProduct)'
+            [class.selected] = 'isSelected(myProduct)'>
+        </product-row>
+    </div>
+    `
+})
+
+
+class ProductsList {
+
+    /**
+     * @input - productList - the Product[] passed to us
+     */
+    productList: Product[];
+
+
+    /**
+     * @output onProductSelected - outputs the current
+     * Product whenever a new Product is selected
+     */
+    onProductSelected:EventEmitter<Product>;
+
+    /**
+     * @property  currentProduct - local state containing  the
+     * currently selected Product
+     * ( local component state )
+     */
+    currentProduct:Product;
+
+
+    constructor() {
+        this.onProductSelected = new EventEmitter();
+    }
+
+    clicked(product: Product): void {
+        this.currentProduct = product;
+        this.onProductSelected.emit(product);
+    }
+
+    isSelected(product: Product): boolean {
+        if (!product || !this.currentProduct) {
+            return false;
+        }
+        return product.sku === this.currentProduct.sku;
+    }
+
 }
 
 
@@ -24,27 +86,20 @@ class Product {
  */
 @Component({
     selector: 'inventory-app',
-    directives: [],
+    directives: [ProductsList],
     template: `
   <div class="inventory-app">
-   <products-list
-    [productsList] = "products"
-    <!--
-    input
-    -->
-
-    (onProductSelected) = "productWasSelected($event)"
-    <!--
-    output
-    -->
-    >
+    <products-list
+      [productList]="products"
+      (onProductSelected)="productWasSelected($event)">
     </products-list>
   </div>
   `
 })
+
 class InventoryApp {
 
-    products:Product[];
+    products: Product[];
 
     constructor() {
         this.products = [
@@ -74,9 +129,7 @@ class InventoryApp {
     productWasSelected(product:Product):void {
         console.log('Product selected: ', product);
     }
-
-
-
 }
+
 
 bootstrap(InventoryApp);
