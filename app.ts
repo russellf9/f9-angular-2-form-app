@@ -6,7 +6,6 @@ import {
     FormBuilder,
     ControlGroup,
     Validators,
-    AbstractControl
 } from 'angular2/common';
 
 import {bootstrap} from 'angular2/platform/browser';
@@ -16,26 +15,34 @@ import {bootstrap} from 'angular2/platform/browser';
  * @DemoFormSkuBuilder: the top-level component for our application
  */
 @Component({
-    selector: 'demo-form-with-validations-explicit',
+    selector: 'demo-form-with-validations-shorthand',
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES],
     template: `
     <div class="ui raised segment">
-        <h2 class="ui header">Form with Validation:</h2>
+        <h2 class="ui header">Form with Shorthand Validation:</h2>
         <form [ngFormModel]="myForm"
             (ngSubmit)="onSubmit(myForm.value)" class="ui form">
 
-            <div class="field" [class.error]="!sku.valid && sku.touched">
+
+            <div class="field" [class.error]="!myForm.find('sku').valid && myForm.find('sku').touched">
                  <label for="skuInput">SKU</label>
 
                  <input type="text"
                     id="skuInput"
                     placeholder="SKU"
-                    [ngFormControl]="sku">
-                    <div *ngIf="!sku.valid" class="ui error">SKU is invalid</div>
-                    <div *ngIf="sku.hasError('required')" class="ui error">SKU is required</div>
+                    #sku="ngForm"
+                    [ngFormControl]="myForm.controls['sku']">
+
+
+                 <div *ngIf="!sku.control.valid" class="ui error">SKU is invalid</div>
+                 <div *ngIf="sku.control.hasError('required')" class="ui error">SKU is required</div>
+
             </div>
-           <div *ngIf="!myForm.valid"
-      class="ui error message">Form is invalid</div>
+
+            <div *ngIf="!myForm.valid"
+      class="ui error message">Form is invalid
+            </div>
+
             <button type="submit"
                     class="ui button">
                     submit
@@ -46,41 +53,28 @@ import {bootstrap} from 'angular2/platform/browser';
 })
 
 
-class DemoFormWithValidationsExplicit {
 
-    myForm:ControlGroup;
-    sku:AbstractControl;
 
-    constructor(fb:FormBuilder) {
-        this.myForm = fb.group ({
+class DemoFormWithValidationsShorthand {
+
+    myForm: ControlGroup;
+
+    constructor(fb: FormBuilder) {
+
+        this.myForm = fb.group({
             'sku': ['', Validators.required]
-        });
-
-        this.sku = this.myForm.controls['sku'];
+        })
     }
 
     onSubmit(value:string):void {
         console.log('you submitted value: ', value);
     }
-
-
-}
-
-bootstrap(DemoFormWithValidationsExplicit);
-
-
-/*
- this.myForm = fb.group ({
- 'sku': ['', Validators.required]
- });
-
-
-
- this.sku = this.myForm.controls['sku'];
-
- onSubmit(value:string) {
- console.log('you submitted value: ', value);
  }
- */
+
+
+bootstrap(DemoFormWithValidationsShorthand);
+
+
+
 
 
