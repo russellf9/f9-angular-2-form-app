@@ -86,6 +86,12 @@ class DemoFormWithCustomValidations {
         });
 
         this.sku = this.myForm.controls['sku'];
+
+        this.sku.valueChanges.subscribe (
+            (value:string) => {
+                console.log('sku changed to: ', value);
+            }
+        )
     }
 
 
